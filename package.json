@@ -2,10 +2,18 @@
   "name": "uk-property-yield-calculator",
   "version": "1.0.0",
   "private": true,
-  "description": "Simple static server for the UK Property Net Yield Calculator",
+  "description": "UK Property Net Yield Calculator (Next.js app)",
   "license": "MIT",
   "scripts": {
-    "start": "node server.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   }
 }
 

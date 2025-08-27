@@ -7,23 +7,20 @@ What this does
 - Computes SDLT with optional 3% additional property surcharge
 - Shows net yield on purchase price, cash-on-cash return, and cap rate
 
-How to use
-1. Open `index.html` in a browser (no build or server needed).
-2. Fill in purchase, mortgage, rent, expenses, and your other taxable income.
-3. Toggle "Additional property" to include the 3% SDLT surcharge.
-4. Results update instantly.
+How to use (Next.js)
+1. Install dependencies:
+   - `npm install`
+2. Start the development server:
+   - `npm run dev`
+   - Then open `http://localhost:3000`.
+3. Build for production:
+   - `npm run build`
+   - `npm start`
+4. Fill in purchase, mortgage, rent, expenses, and your other taxable income.
+5. Toggle "Additional property" to include the 3% SDLT surcharge. Results update instantly.
 
-Run a simple local server
-- Node.js (recommended, provided):
-  - Install Node.js if needed.
-  - From the project directory:
-    - `npm start`
-  - Then open `http://localhost:3000`.
-
-- Python 3 (alternative):
-  - From the project directory:
-    - `python3 -m http.server 3000`
-  - Then open `http://localhost:3000`.
+Run with a simple server (legacy)
+- The previous static version (`index.html` + `app.js`) still exists for reference, but the recommended approach is the Next.js app above.
 
 Key assumptions
 - Income Tax (England/Northern Ireland/Wales) 2024/25:
