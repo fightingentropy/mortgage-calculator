@@ -1,0 +1,12 @@
+{
+  "name": "uk-property-yield-calculator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Simple static server for the UK Property Net Yield Calculator",
+  "license": "MIT",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
+
+
