@@ -1,4 +1,4 @@
-UK Property Net Yield Calculator
+UK Property Net Yield Calculator (Vanilla JS)
 
 What this does
 - Calculates after-tax net annual cash flow for a UK residential rental property
@@ -7,20 +7,19 @@ What this does
 - Computes SDLT with optional 3% additional property surcharge
 - Shows net yield on purchase price, cash-on-cash return, and cap rate
 
-How to use (Next.js)
-1. Install dependencies:
-   - `npm install`
-2. Start the development server:
-   - `npm run dev`
-   - Then open `http://localhost:3000`.
-3. Build for production:
-   - `npm run build`
-   - `npm start`
+How to use (static site)
+1. Open `index.html` directly in your browser, or
+2. Run a dev server with Bun:
+   - `bun run dev` (watches files and restarts on change)
+   - Or `bun start` to run once
+3. Then open `http://localhost:3000`.
 4. Fill in purchase, mortgage, rent, expenses, and your other taxable income.
 5. Toggle "Additional property" to include the 3% SDLT surcharge. Results update instantly.
 
-Run with a simple server (legacy)
-- The previous static version (`index.html` + `app.js`) still exists for reference, but the recommended approach is the Next.js app above.
+Files
+- `index.html`: Markup and layout
+- `styles.css`: All styles (ported from the previous app)
+- `script.js`: Calculator logic and DOM bindings
 
 Key assumptions
 - Income Tax (England/Northern Ireland/Wales) 2024/25:
