@@ -3,14 +3,18 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>UK Property Net Yield Calculator</title>
-    <meta name="description" content="After expenses, mortgage and income tax (Section 24 aware)">
+    <title>UK Property Calculator</title>
+    <meta name="description" content="Buy vs Rent and Buy-to-Let investment calculator for the UK">
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
     <header class="app-header">
-      <h1>UK Property Net Yield Calculator</h1>
-      <p class="subtitle">After expenses, mortgage and income tax (Section 24 aware)</p>
+      <h1>UK Property Calculator</h1>
+      <p class="subtitle">Buy vs Rent and Buy-to-Let (investment)</p>
+      <div class="mode-toggle" role="tablist" aria-label="Mode selector">
+        <button type="button" role="tab" aria-selected="true" id="modeOwnerBtn" class="mode active" data-mode="owner">Buy vs Rent</button>
+        <button type="button" role="tab" aria-selected="false" id="modeBtlBtn" class="mode" data-mode="btl">Buy-to-Let</button>
+      </div>
     </header>
 
     <main class="container">
@@ -22,18 +26,33 @@
             <div class="grid two">
               <label class="field">
                 <span>Purchase price (£)</span>
-                <input id="purchasePrice" type="number" min="0" step="1000" value="300000">
+                <input id="purchasePrice" type="number" min="0" step="1000" value="500000">
               </label>
               <label class="field">
-                <span class="help" title="Select Yes if this is an additional residential property. Adds the 3% SDLT surcharge on the entire purchase price.">Additional property (3% SDLT)?</span>
-                <select id="isAdditional">
-                  <option value="no">No</option>
-                  <option value="yes" selected>Yes</option>
+                <span>Deposit type</span>
+                <select id="depositType">
+                  <option value="amount">£ amount</option>
+                  <option value="percent" selected>% of price</option>
                 </select>
               </label>
+              <label class="field" id="depositValueField">
+                <span>Deposit</span>
+                <input id="depositValue" type="number" min="0" step="1000" value="10">
+              </label>
               <label class="field">
-                <span class="help" title="Legal fees, searches, survey/valuation, broker fees, mortgage fees, and similar one-time costs at purchase.">Other one-off purchase costs (£)</span>
-                <input id="otherPurchaseCosts" type="number" min="0" step="100" value="3000">
+                <span>Other purchase fees (£)</span>
+                <input id="otherPurchaseCosts" type="number" min="0" step="50" value="0">
+              </label>
+              <label class="field">
+                <span>Product fee (£)</span>
+                <input id="productFee" type="number" min="0" step="50" value="0">
+              </label>
+              <label class="field">
+                <span>Product fee treatment</span>
+                <select id="productFeeTreatment">
+                  <option value="upfront">Pay upfront</option>
+                  <option value="add_to_loan" selected>Add to loan</option>
+                </select>
               </label>
             </div>
           </div>
@@ -42,143 +61,276 @@
             <h3>Mortgage</h3>
             <div class="grid two">
               <label class="field">
-                <span class="help" title="Loan-to-Value: mortgage amount ÷ purchase price × 100. Deposit equals (1 − LTV) × price.">LTV (%)</span>
-                <input id="ltvPercent" type="number" min="0" max="100" step="1" value="75">
-              </label>
-              <label class="field">
-                <span class="help" title="Mortgage annual interest rate (APR). Used to calculate yearly interest and repayments.">Interest rate (APR %)</span>
-                <input id="interestRatePercent" type="number" min="0" step="0.01" value="5.5">
-              </label>
-              <label class="field">
-                <span class="help" title="Interest-only: pay interest only. Repayment: amortised payments covering interest and principal over the term.">Repayment type</span>
+                <span>Mortgage type</span>
                 <select id="repaymentType">
-                  <option value="interest_only" selected>Interest-only</option>
-                  <option value="repayment">Repayment</option>
+                  <option value="repayment" selected>Repayment</option>
+                  <option value="interest_only">Interest-only</option>
                 </select>
               </label>
-              <label class="field" id="termYearsField" style="display:none;">
-                <span class="help" title="Mortgage length in years. Only affects the monthly/annual payment when Repayment is selected.">Term (years)</span>
+              <label class="field">
+                <span>APR (%)</span>
+                <input id="interestRatePercent" type="number" min="0" step="0.01" value="4">
+              </label>
+              <label class="field">
+                <span>Term (years)</span>
                 <input id="termYears" type="number" min="1" max="40" step="1" value="25">
               </label>
             </div>
           </div>
 
           <div class="section">
-            <h3>Your Income</h3>
+            <h3>Economics & Exit</h3>
             <div class="grid two">
               <label class="field">
-                <span class="help" title="Your other taxable income (e.g., salary). Used to place rental profits into the correct income tax bands. NI not included.">Other taxable income (£/yr)</span>
-                <input id="salary" type="number" min="0" step="1000" value="60000">
+                <span>House-price growth (% p.a.)</span>
+                <input id="hpiGrowth" type="number" step="0.1" value="3">
               </label>
+              <label class="field">
+                <span>CPI inflation (% p.a.)</span>
+                <input id="cpiPercent" type="number" step="0.1" value="2">
+              </label>
+              <label class="field">
+                <span>Discount rate (% p.a.)</span>
+                <input id="discountRate" type="number" step="0.1" value="4">
+              </label>
+              <label class="field">
+                <span>Sell at end of term?</span>
+                <select id="sellAtEnd">
+                  <option value="yes" selected>Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Selling agent fee (%)</span>
+                <input id="agentPercent" type="number" step="0.1" value="1.5">
+              </label>
+              <label class="field">
+                <span>VAT on agent fee (%)</span>
+                <input id="agentVatPercent" type="number" step="0.1" value="20">
+              </label>
+              <label class="field">
+                <span>Legal fees on sale (£)</span>
+                <input id="saleLegal" type="number" step="50" value="1000">
+              </label>
+            </div>
+            <div class="capex">
+              <div class="capex-header">
+                <h4>Capex schedule (optional)</h4>
+                <button type="button" id="addCapex">Add row</button>
+              </div>
+              <div id="capexRows" class="capex-rows"></div>
             </div>
           </div>
 
           <div class="section">
-            <h3>Rent & Annual Expenses</h3>
+            <h3>Taxes</h3>
             <div class="grid two">
               <label class="field">
-                <span>Gross rent (£/yr)</span>
-                <input id="annualRent" type="number" min="0" step="100" value="21000">
+                <span>Buyer type (SDLT)</span>
+                <select id="buyerType">
+                  <option value="ftb">First-time buyer</option>
+                  <option value="standard">Standard</option>
+                  <option value="additional" selected>Additional property</option>
+                </select>
               </label>
               <label class="field">
-                <span class="help" title="Estimated percentage of annual rent lost due to vacancies and non-payment. The model reduces rent by this percentage.">Voids (%)</span>
-                <input id="voidsPercent" type="number" min="0" max="100" step="0.5" value="5">
+                <span>Surcharge refund within 3 years?</span>
+                <select id="surchargeRefund">
+                  <option value="no" selected>No</option>
+                  <option value="yes">Yes</option>
+                </select>
               </label>
               <label class="field">
-                <span class="help" title="Letting agent/management fees as a percent of rent after voids.">Letting/management fee (% of rent)</span>
-                <input id="lettingPercent" type="number" min="0" max="100" step="0.5" value="10">
+                <span>CGT rate on sale</span>
+                <select id="cgtRate">
+                  <option value="18">18%</option>
+                  <option value="24" selected>24%</option>
+                  <option value="blended">Blended</option>
+                </select>
               </label>
               <label class="field">
-                <span class="help" title="Annual allowance for routine repairs and wear-and-tear. Not capital improvements.">Maintenance reserve (% of rent)</span>
-                <input id="maintenancePercent" type="number" min="0" max="100" step="0.5" value="8">
+                <span>CGT annual allowance (£)</span>
+                <input id="cgtAllowance" type="number" step="100" value="3000">
               </label>
               <label class="field">
-                <span>Insurance (£/yr)</span>
-                <input id="insuranceAnnual" type="number" min="0" step="50" value="300">
+                <span>PRR main residence (last 9 months deemed occupied)</span>
+                <select id="prrToggle">
+                  <option value="no" selected>No</option>
+                  <option value="yes">Yes</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="section owner-only">
+            <h3>Owner-occupier (Buy vs Rent)</h3>
+            <div class="grid two">
+              <label class="field">
+                <span>Current rent (£/mo)</span>
+                <input id="currentRent" type="number" step="50" value="2000">
               </label>
               <label class="field">
-                <span class="help" title="Leasehold costs typically charged by the freeholder or management company.">Service charge + ground rent (£/yr)</span>
-                <input id="serviceChargeAnnual" type="number" min="0" step="50" value="1200">
+                <span>Rent inflation (% p.a.)</span>
+                <input id="rentInflation" type="number" step="0.1" value="3">
               </label>
               <label class="field">
-                <span class="help" title="Any other recurring costs (e.g., compliance, utilities you cover, council tax during voids).">Other annual expenses (£/yr)</span>
-                <input id="otherAnnualExpenses" type="number" min="0" step="50" value="300">
+                <span>Maintenance (% of value per year)</span>
+                <input id="ownerMaintenancePctOfValue" type="number" step="0.1" value="1">
+              </label>
+              <label class="field">
+                <span>Service charge (£/yr)</span>
+                <input id="ownerService" type="number" step="50" value="2300">
+              </label>
+              <label class="field">
+                <span>Buildings insurance (£/yr)</span>
+                <input id="ownerInsurance" type="number" step="50" value="300">
+              </label>
+              <label class="field">
+                <span>Ground rent (£/yr)</span>
+                <input id="ownerGroundRent" type="number" step="50" value="0">
+              </label>
+            </div>
+          </div>
+
+          <div class="section btl-only" hidden>
+            <h3>Buy-to-Let (Investment)</h3>
+            <div class="grid two">
+              <label class="field">
+                <span>Market rent (£/mo)</span>
+                <input id="btlRentMonthly" type="number" step="50" value="2000">
+              </label>
+              <label class="field">
+                <span>Voids (%)</span>
+                <input id="btlVoidsPct" type="number" step="0.5" value="5">
+              </label>
+              <label class="field">
+                <span>Management fee (% of collected rent)</span>
+                <input id="btlMgmtPct" type="number" step="0.5" value="12">
+              </label>
+              <label class="field">
+                <span>Compliance & safety (£/yr)</span>
+                <input id="btlCompliance" type="number" step="50" value="250">
+              </label>
+              <label class="field">
+                <span>Landlord tax band</span>
+                <select id="landlordTaxBand">
+                  <option value="20">20%</option>
+                  <option value="40">40%</option>
+                  <option value="45" selected>45%</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Section 24 (finance cost credit at 20%)</span>
+                <select id="section24">
+                  <option value="on" selected>ON</option>
+                  <option value="off">OFF</option>
+                </select>
               </label>
             </div>
           </div>
 
           <div class="actions">
             <button type="button" class="secondary" id="resetBtn">Reset defaults</button>
+            <span class="spacer"></span>
+            <button type="button" id="downloadCsv">Download CSV</button>
+            <button type="button" id="printPdf">Print summary</button>
           </div>
         </form>
       </section>
 
       <section class="card results">
-        <h2>Results</h2>
-        <div class="highlights">
+        <h2>Summary</h2>
+        <div class="highlights grid-3">
           <div class="kpi">
-            <div class="kpi-label"><span class="help" title="Cash left after operating costs, mortgage payments, and incremental income tax.">Net annual cash flow (after tax)</span></div>
-            <div class="kpi-value" id="netCashAfterTax">£0</div>
+            <div class="kpi-label">Nominal IRR</div>
+            <div class="kpi-value" id="kpiIrr">0.00%</div>
           </div>
           <div class="kpi">
-            <div class="kpi-label"><span class="help" title="After-tax cash flow ÷ purchase price.">Net yield on purchase price</span></div>
-            <div class="kpi-value" id="netYieldOnPurchasePrice">0.00%</div>
+            <div class="kpi-label">Real IRR (deflated by CPI)</div>
+            <div class="kpi-value" id="kpiRealIrr">0.00%</div>
           </div>
           <div class="kpi">
-            <div class="kpi-label"><span class="help" title="After-tax cash flow ÷ total cash invested (deposit + SDLT + purchase costs).">Cash-on-cash return</span></div>
-            <div class="kpi-value" id="cashOnCash">0.00%</div>
+            <div class="kpi-label">NPV</div>
+            <div class="kpi-value" id="kpiNpv">£0</div>
           </div>
           <div class="kpi">
-            <div class="kpi-label"><span class="help" title="NOI (pre-finance) ÷ purchase price.">Cap rate (pre-finance)</span></div>
-            <div class="kpi-value" id="capRate">0.00%</div>
+            <div class="kpi-label">Total cash in</div>
+            <div class="kpi-value" id="kpiCashIn">£0</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Net proceeds / Equity at end</div>
+            <div class="kpi-value" id="kpiNetProceeds">£0</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Payback year</div>
+            <div class="kpi-value" id="kpiPayback">—</div>
           </div>
         </div>
 
-        <div class="breakdown">
-          <h3>Breakdown</h3>
-
+        <div class="mode-output owner-only">
+          <h3>Buy vs Rent outputs</h3>
           <div class="table">
-            <div class="row header"><span>Cash invested</span><span></span></div>
-            <div class="row"><span>Deposit</span><span id="deposit">£0</span></div>
-            <div class="row"><span>Stamp Duty Land Tax (SDLT)</span><span id="sdlt">£0</span></div>
-            <div class="row"><span>Other purchase costs</span><span id="otherPurchaseCostsOut">£0</span></div>
-            <div class="row total"><span>Total cash invested</span><span id="cashInvested">£0</span></div>
+            <div class="row header"><span>Metric</span><span>Value</span></div>
+            <div class="row"><span>Year owning becomes cheaper than renting</span><span id="ownerCheaperYear">—</span></div>
+            <div class="row"><span>Breakeven rent (Year 1, £/mo)</span><span id="ownerBreakevenRent">£0</span></div>
           </div>
+        </div>
 
+        <div class="mode-output btl-only" hidden>
+          <h3>BTL outputs</h3>
           <div class="table">
-            <div class="row header"><span>Operating</span><span></span></div>
-            <div class="row"><span class="help" title="Gross rent reduced by the voids percentage.">Rent after voids</span><span id="rentAfterVoids">£0</span></div>
-            <div class="row"><span class="help" title="Letting/management costs based on rent after voids.">Letting/management</span><span id="lettingFee">£0</span></div>
-            <div class="row"><span class="help" title="Ongoing repairs allowance set as a percent of rent after voids.">Maintenance reserve</span><span id="maintenanceCost">£0</span></div>
-            <div class="row"><span class="help" title="Annual insurance premium.">Insurance</span><span id="insurance">£0</span></div>
-            <div class="row"><span class="help" title="Service charge and ground rent if leasehold.">Service charge + ground</span><span id="service">£0</span></div>
-            <div class="row"><span class="help" title="Other recurring operating costs.">Other annual</span><span id="otherAnnual">£0</span></div>
-            <div class="row total"><span class="help" title="Net Operating Income: rent after voids minus operating expenses, before mortgage costs.">NOI (pre-finance)</span><span id="noi">£0</span></div>
+            <div class="row header"><span>Metric</span><span>Value</span></div>
+            <div class="row"><span>Year cashflow turns positive</span><span id="btlPositiveYear">—</span></div>
           </div>
+        </div>
 
-          <div class="table">
-            <div class="row header"><span>Mortgage</span><span></span></div>
-            <div class="row"><span class="help" title="Purchase price × LTV.">Loan amount</span><span id="loanAmount">£0</span></div>
-            <div class="row"><span class="help" title="Year-one interest using APR × loan amount.">Annual interest</span><span id="annualInterest">£0</span></div>
-            <div class="row"><span class="help" title="Total mortgage payments in a year. For interest-only this equals the interest; for repayment this is the amortised payment.">Annual repayment</span><span id="annualRepayment">£0</span></div>
-            <div class="row"><span class="help" title="Section 24: 20% tax credit on eligible interest, capped by pre-finance property profit.">Section 24 credit (20% of allowed)</span><span id="s24Credit">£0</span></div>
+        <div class="charts">
+          <h3>Charts</h3>
+          <div class="grid two">
+            <div>
+              <canvas id="cashflowChart" height="160"></canvas>
+            </div>
+            <div>
+              <canvas id="valueDebtChart" height="160"></canvas>
+            </div>
           </div>
+        </div>
 
-          <div class="table">
-            <div class="row header"><span>Tax</span><span></span></div>
-            <div class="row"><span class="help" title="Property profit used for income tax: NOI before mortgage costs.">Taxable property profit (pre-finance)</span><span id="propertyProfitPreFinance">£0</span></div>
-            <div class="row"><span class="help" title="Extra income tax triggered by the property after Section 24 credit.">Incremental tax due</span><span id="incrementalTaxDue">£0</span></div>
+        <div class="tables">
+          <h3>Tables</h3>
+          <div class="grid two">
+            <div>
+              <h4>Amortisation</h4>
+              <div class="table" id="amortTable"></div>
+            </div>
+            <div class="btl-only" id="btlTableWrap" hidden>
+              <h4>BTL P&L</h4>
+              <div class="table" id="btlTable"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sensitivity">
+          <h3>Sensitivity</h3>
+          <div class="grid two">
+            <div>
+              <h4>Price growth × Rent growth</h4>
+              <div id="heatmapGrowth" class="heatmap"></div>
+            </div>
+            <div>
+              <h4>Interest rate × Deposit</h4>
+              <div id="heatmapFinance" class="heatmap"></div>
+            </div>
           </div>
         </div>
       </section>
     </main>
 
     <footer class="app-footer">
-      <p>
-        This tool estimates UK residential property net yield using 2024/25 rUK income tax bands and SDLT with a 3% additional property surcharge when selected. It applies Section 24 (20% credit) to mortgage interest. For guidance only, not tax advice.
-      </p>
+      <p>Estimates only. Not tax advice. England/NI/Wales SDLT and rUK income tax.</p>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

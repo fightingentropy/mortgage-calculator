@@ -42,6 +42,30 @@ html, body {
   font-size: 14px;
 }
 
+.mode-toggle {
+  margin-top: 12px;
+  display: inline-flex;
+  gap: 8px;
+  background: #0e1217;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 6px;
+}
+
+.mode-toggle .mode {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.mode-toggle .mode.active {
+  color: var(--text);
+  background: linear-gradient(180deg, #111724, #0c111a);
+  border: 1px solid var(--border);
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -80,6 +104,12 @@ html, body {
 .grid.two {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
 }
 
@@ -140,6 +170,8 @@ button.secondary {
   color: var(--muted);
 }
 
+.spacer { flex: 1; }
+
 .results .highlights {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -162,6 +194,10 @@ button.secondary {
 
 .breakdown { margin-top: 16px; }
 
+.charts, .tables, .sensitivity { margin-top: 18px; }
+
+.charts canvas { width: 100%; }
+
 .table {
   margin-top: 10px;
   background: #0e1217;
@@ -182,12 +218,37 @@ button.secondary {
 .row.total { background: rgba(128, 255, 219, 0.05); border-top: 1px solid #1a2130; font-weight: 700; }
 .row:last-child { border-bottom: none; }
 
+.capex { margin-top: 10px; }
+.capex-header { display: flex; align-items: center; justify-content: space-between; }
+.capex-rows { margin-top: 8px; display: grid; gap: 8px; }
+.capex-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; }
+.capex-row input { width: 100%; }
+.capex-row .remove { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
+
+.heatmap { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-top: 6px; }
+.heat-cell { padding: 8px; text-align: center; border-radius: 8px; cursor: pointer; border: 1px solid var(--border); font-size: 12px; }
+.heat-cell:hover { border-color: var(--accent); }
+.heat-cold { background: rgba(76, 201, 240, 0.08); }
+.heat-mid { background: rgba(128, 255, 219, 0.08); }
+.heat-hot { background: rgba(255, 92, 114, 0.08); }
+
 .app-footer {
   max-width: 1200px;
   margin: 18px auto 40px;
   padding: 0 20px;
   color: var(--muted);
   font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .grid-3 { grid-template-columns: 1fr; }
+}
+
+@media print {
+  body { background: #fff; color: #000; }
+  .app-header .mode-toggle, .actions, .sensitivity, .charts { display: none !important; }
+  .card { box-shadow: none; border: none; }
+  .container { max-width: 900px; }
 }
 
 
