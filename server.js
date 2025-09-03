@@ -6,6 +6,7 @@ const server = Bun.serve({
     const url = new URL(req.url);
     let pathname = url.pathname;
     if (pathname === "/") pathname = "/index.html";
+    if (pathname === "/favicon.ico") pathname = "/favicon.svg";
 
     // Prevent directory traversal
     const safePath = pathname.replace(/\.\.+/g, "").replace(/^\//, "");
